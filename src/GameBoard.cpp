@@ -118,7 +118,7 @@ void GameBoard::Update()
         {
             _state = GameState::GameOverScreen;
         }
-        if (IntersectingBoarder(_snake.GetHead()))
+        if (IntersectingBorder(_snake.GetHead()))
         {
             _state = GameState::GameOverScreen;
         }
@@ -158,7 +158,7 @@ Treat GameBoard::GetActiveTreat()
     return activeTreat;
 }
 
-bool GameBoard::IntersectingBoarder(Segment s)
+bool GameBoard::IntersectingBorder(Segment s)
 {
     int leftBorder = _origin._x + SpaceSize;
     if (s._topLeft._x <= leftBorder)

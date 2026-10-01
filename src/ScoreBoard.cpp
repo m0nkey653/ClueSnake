@@ -27,7 +27,7 @@ void ScoreBoard::DrawInitial(Adafruit_SPITFT* display)
 
 void ScoreBoard::DrawUpdate(Adafruit_SPITFT* display)
 {
-    //only clear the right halff
+    //only clear the right half
     display->fillRect(_origin._x + (_width / 2) + 2, _origin._y + 2, (_width / 2) - 4, _height - 4, ARCADA_BLACK);
 
     display->setTextWrap(false);

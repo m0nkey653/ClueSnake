@@ -24,7 +24,7 @@ public:
   Treat GetActiveTreat();
 
 private:
-  bool IntersectingBoarder(Segment s);
+  bool IntersectingBorder(Segment s);
   void InitializeInternal();
   
   Adafruit_SPITFT* _display;
