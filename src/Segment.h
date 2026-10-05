@@ -32,6 +32,8 @@ public:
     int _height = 0;
     Direction _direction = Direction::Unset;
 private:
+    bool IsVertical();
+    void Fill(Adafruit_SPITFT* display, int color);
 };
 
 #endif

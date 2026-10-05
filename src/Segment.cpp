@@ -24,7 +24,7 @@ Segment::Segment(Point topLeft, int color, Direction direction, int width, int h
 {
     int tempWidth = width;
     int tempHeight = height;
-    if (direction == Direction::East || direction == Direction::West)
+    if (!IsVertical())
     {
         tempWidth = height;
         tempHeight = width;
@@ -37,104 +37,82 @@ Segment::Segment(Point topLeft, int color, Direction direction, int width, int h
 
 Segment Segment::GetNext(Direction direction)
 {
-    if (_direction == Direction::East)
+    // origin of the next segment, based on the current heading and the new one
+    Point origin;
+    switch (_direction)
     {
-        if (direction == Direction::East)
-        {
-            Point origin = { _topLeft._x + _height, _topLeft._y };
-            return Segment(origin, _color, direction, _width, _height);
-        }
-        if (direction == Direction::South)
-        {
-            Point origin = { _bottomRight._x - _width, _bottomRight._y };
-            return Segment(origin, _color, direction, _width, _height);
-        }
-        if (direction == Direction::North)
-        {
-            Point origin = { _topRight._x - _width, _topRight._y - _height };
-            return Segment(origin, _color, direction, _width, _height);
-        }
-    }
-    if (_direction == Direction::West)
-    {
-        if (direction == Direction::West)
-        {
-            Point origin = { _topLeft._x - _height, _topLeft._y };
-            return Segment(origin, _color, direction, _width, _height);
-        }
-        if (direction == Direction::South)
-        {
-            Point origin = _bottomLeft;
-            return Segment(origin, _color, direction, _width, _height);
-        }
-        if (direction == Direction::North)
-        {
-            Point origin = { _topLeft._x, _topLeft._y - _height };
-            return Segment(origin, _color, direction, _width, _height);
-        }
-    }
-    
-    if (_direction == Direction::North)
-    {
-        if (direction == Direction::North)
-        {
-            Point origin = { _topLeft._x, _topLeft._y - _height };
-            return Segment(origin, _color, direction, _width, _height);
-        }
-        if (direction == Direction::East)
-        {
-            Point origin = _topRight;
-            return Segment(origin, _color, direction, _width, _height);
-        }
-        if (direction == Direction::West)
-        {
-            Point origin = { _topLeft._x - _height, _topLeft._y };
-            return Segment(origin, _color, direction, _width, _height);
-        }
-    }
-    if (_direction == Direction::South)
-    {
-        if (direction == Direction::South)
-        {
-            Point origin = { _topLeft._x, _topLeft._y + _height };
-            return Segment(origin, _color, direction, _width, _height);
-        }
-        if (direction == Direction::East)
-        {
-            Point origin = { _bottomRight._x, _bottomRight._y - _width };
-            return Segment(origin, _color, direction, _width, _height);
-        }
-        if (direction == Direction::West)
-        {
-            Point origin = { _bottomLeft._x - _height, _bottomLeft._y - _width };
-            return Segment(origin, _color, direction, _width, _height);
-        }
+        case Direction::East:
+            switch (direction)
+            {
+                case Direction::East:  origin = { _topLeft._x + _height, _topLeft._y }; break;
+                case Direction::South: origin = { _bottomRight._x - _width, _bottomRight._y }; break;
+                case Direction::North: origin = { _topRight._x - _width, _topRight._y - _height }; break;
+                default: return Segment(*this);
+            }
+            break;
+
+        case Direction::West:
+            switch (direction)
+            {
+                case Direction::West:  origin = { _topLeft._x - _height, _topLeft._y }; break;
+                case Direction::South: origin = _bottomLeft; break;
+                case Direction::North: origin = { _topLeft._x, _topLeft._y - _height }; break;
+                default: return Segment(*this);
+            }
+            break;
+
+        case Direction::North:
+            switch (direction)
+            {
+                case Direction::North: origin = { _topLeft._x, _topLeft._y - _height }; break;
+                case Direction::East:  origin = _topRight; break;
+                case Direction::West:  origin = { _topLeft._x - _height, _topLeft._y }; break;
+                default: return Segment(*this);
+            }
+            break;
+
+        case Direction::South:
+            switch (direction)
+            {
+                case Direction::South: origin = { _topLeft._x, _topLeft._y + _height }; break;
+                case Direction::East:  origin = { _bottomRight._x, _bottomRight._y - _width }; break;
+                case Direction::West:  origin = { _bottomLeft._x - _height, _bottomLeft._y - _width }; break;
+                default: return Segment(*this);
+            }
+            break;
+
+        default:
+            return Segment(*this);
     }
 
-    return Segment(*this);
+    return Segment(origin, _color, direction, _width, _height);
 }
 
 void Segment::Draw(Adafruit_SPITFT* tft)
 {
-    if (_direction == Direction::North || _direction == Direction::South)
-    {
-        tft->fillRect(_topLeft._x, _topLeft._y, _width, _height, _color);
-    }
-    else
-    {
-        tft->fillRect(_topLeft._x, _topLeft._y, _height, _width, _color);
-    }
+    Fill(tft, _color);
 }
 
 void Segment::Clear(Adafruit_SPITFT* tft)
 {
-    if (_direction == Direction::North || _direction == Direction::South)
+    Fill(tft, ARCADA_BLACK);
+}
+
+bool Segment::IsVertical()
+{
+    return _direction == Direction::North || _direction == Direction::South;
+}
+
+void Segment::Fill(Adafruit_SPITFT* tft, int color)
+{
+    // width and height are defined for a vertical segment, so swap them when horizontal
+    if (IsVertical())
     {
-        tft->fillRect(_topLeft._x, _topLeft._y, _width, _height, ARCADA_BLACK);
+        tft->fillRect(_topLeft._x, _topLeft._y, _width, _height, color);
     }
     else
     {
-        tft->fillRect(_topLeft._x, _topLeft._y, _height, _width, ARCADA_BLACK);
+        tft->fillRect(_topLeft._x, _topLeft._y, _height, _width, color);
     }
 }
 
