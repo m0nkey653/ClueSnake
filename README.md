@@ -31,13 +31,13 @@ Library dependencies are pinned in [`platformio.ini`](platformio.ini) and instal
 
 | Library | Version |
 | --- | --- |
-| Adafruit GFX Library | 1.11.3 |
-| Adafruit ST7735 and ST7789 Library | 1.9.3 |
+| Adafruit GFX Library | 1.12.6 |
+| Adafruit ST7735 and ST7789 Library | 1.11.0 |
 | arduino-timer | 2.3.1 |
-| Adafruit SPIFlash | 3.11.0 |
-| Adafruit ImageReader Library | 2.8.1 |
-| SdFat - Adafruit Fork | 1.5.1 |
-| Adafruit EPD | 4.5.0 |
+| Adafruit SPIFlash | 5.1.1 |
+| Adafruit ImageReader Library | 2.12.0 |
+| SdFat - Adafruit Fork | 2.3.103 |
+| Adafruit EPD | 4.6.14 |
 
 ### Splash screen
 
@@ -51,7 +51,7 @@ If the image is missing or the flash filesystem can't be mounted (for example, u
 
 - **Game loop:** `arduino-timer` fires a callback every 1 ms that sets an update flag every 50 ms, giving about 20 frames per second. `loop()` runs one `GameBoard::Update()` per frame inside a single `startWrite()`/`endWrite()` SPI transaction.
 - **Input:** The buttons are read with falling-edge interrupts that queue one pending rotation. The game applies it on the next frame, with a 3-frame debounce.
-- **Rendering:** The screen is never fully cleared during play. Each frame erases the tail segments the snake just left, redraws the snake, and refreshes only the right half of the scoreboard.
+- **Rendering:** The screen is never fully cleared during play. Each frame draws only the new head segment, erases the tail segments the snake just left, and refreshes only the right half of the scoreboard. That keeps the frame cost constant no matter how long the snake gets.
 - **Collision:** The snake is a list of small rectangular `Segment`s. Collisions with treats, walls and its own body are checked as rectangle and point intersections. New treats spawn at random positions that don't overlap the snake.
 
 ### Source layout
@@ -67,3 +67,7 @@ If the image is missing or the flash filesystem can't be mounted (for example, u
 | `ImageLoader` | Draws BMPs from QSPI flash (splash screen) |
 | `ClueDisplay` | ST7789 display initialization |
 | `Point`, `Common.h`, `Colors.h` | Geometry, direction and rotation enums, RGB565 colors |
+
+## License
+
+[MIT](LICENSE)
