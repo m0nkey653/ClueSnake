@@ -94,7 +94,7 @@ void GameBoard::Update()
 
         _snake.UpdateSnake();
         _snake.ClearSnakeTail(_display);
-        _snake.DrawSnake(_display);
+        _snake.DrawSnakeUpdate(_display);
 
         if (_activeTreat.SegmentIntersects(_snake.GetHead()))
         {

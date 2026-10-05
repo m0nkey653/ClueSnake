@@ -140,17 +140,14 @@ void Snake::ClearSnakeTail(Adafruit_SPITFT* display)
 
 void Snake::DrawSnake(Adafruit_SPITFT* display)
 {
-  for (auto p : _segments)
+  for (auto& segment : _segments)
   {
-    Segment segment(p);
     segment.Draw(display);
   }
 }
 
+// segments never change once drawn, so each frame only the new head needs drawing
 void Snake::DrawSnakeUpdate(Adafruit_SPITFT* display)
 {
-    Segment tailSegment(*_segments.end());
-    tailSegment.Draw(display);
-    Segment headSegment(_segments[0]);
-    headSegment.Draw(display);
+  _segments[0].Draw(display);
 }
