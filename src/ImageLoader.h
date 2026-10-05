@@ -3,7 +3,7 @@
 
 // https://learn.adafruit.com/adafruit-gfx-graphics-library/loading-images
 
-#include <SdFat.h>
+#include <SdFat_Adafruit_Fork.h>
 #include <Adafruit_SPIFlash.h>
 #include <Adafruit_ImageReader.h>
 #include <vector>

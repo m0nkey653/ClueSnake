@@ -4,7 +4,7 @@
 
 Adafruit_FlashTransport_QSPI flashTransport;
 Adafruit_SPIFlash flash(&flashTransport);
-FatFileSystem filesys;
+FatVolume filesys;
 Adafruit_ImageReader reader(filesys);
 
 volatile bool ImageLoaderDisplayRelease = false;
