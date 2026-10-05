@@ -14,12 +14,13 @@ class ImageLoader
 public:
     ImageLoader();
     void Setup(Adafruit_SPITFT *_display);
-    void DisplayImage(const char *imagePath);
+    ImageReturnCode DisplayImage(const char *imagePath);
     void DisplayImage(const char *imagePath, std::vector<int> releaseButtonPins);
     String GetStatusMessage(ImageReturnCode stat);
 
 private:
     Adafruit_SPITFT *_display;
+    bool _filesystemReady = false;
 };
 
 #endif

@@ -21,20 +21,19 @@ void ImageLoader::Setup(Adafruit_SPITFT *display)
     _display = display;
     if (!flash.begin())
     {
-        Serial.println("Error, failed to initialize flash chip!");
-        while (1)
-            yield();
+        Serial.println("Error, failed to initialize flash chip! Images will be skipped.");
+        return;
     }
     if (!filesys.begin(&flash))
     {
-        Serial.println("Error, failed to mount newly formatted filesystem!");
+        Serial.println("Error, failed to mount filesystem! Images will be skipped.");
         Serial.println("Was the flash chip formatted with the SdFat_format example?");
-        while (1)
-            yield();
+        return;
     }
+    _filesystemReady = true;
 }
 
-void ImageLoader::DisplayImage(const char *imagePath)
+ImageReturnCode ImageLoader::DisplayImage(const char *imagePath)
 {
     /*
     IMAGE_SUCCESS — Image loaded successfully (or was clipped fully off screen, still considered “successful” in that there was no error).
@@ -42,10 +41,22 @@ void ImageLoader::DisplayImage(const char *imagePath)
     IMAGE_ERR_FORMAT — Not a supported image format. Currently only uncompressed 24-bit color BMPs are supported (more will likely be added over time).
     IMAGE_ERR_MALLOC — Could not allocate memory for operation (drawBMP() won’t generate this error, but other ImageReader functions might).
     */
+    if (!_filesystemReady)
+    {
+        // no filesystem means no images, treat it the same as a missing file
+        return IMAGE_ERR_FILE_NOT_FOUND;
+    }
+
     ImageReturnCode stat = reader.drawBMP(imagePath, *_display, 0, 0);
     if (stat != IMAGE_SUCCESS)
     {
         reader.printStatus(stat);
+
+        // a missing image isn't worth an error screen, let the caller skip it
+        if (stat == IMAGE_ERR_FILE_NOT_FOUND)
+        {
+            return stat;
+        }
 
         auto resultString = GetStatusMessage(stat);
 
@@ -54,15 +65,18 @@ void ImageLoader::DisplayImage(const char *imagePath)
         _display->setTextColor(ARCADA_RED);
         _display->println("Error loading: " + String(imagePath));
         _display->println(resultString);
-
-        return;
     }
+    return stat;
 }
 
 void ImageLoader::DisplayImage(const char *imagePath, std::vector<int> releaseButtonPins)
 {
     Serial.println("ImageLoader::DisplayImage - started");
-    DisplayImage(imagePath);
+    if (DisplayImage(imagePath) == IMAGE_ERR_FILE_NOT_FOUND)
+    {
+        Serial.println("ImageLoader::DisplayImage - image not found, skipping");
+        return;
+    }
 
     for (auto pin : releaseButtonPins)
     {
