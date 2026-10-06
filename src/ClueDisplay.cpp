@@ -3,8 +3,6 @@
 
 void ClueDisplay::BeginDisplay(void)
 {
-    Serial.println("CLUE display begin");
-
     Adafruit_ST7789 *tft = new Adafruit_ST7789(
         &ARCADA_TFT_SPI,
         ARCADA_TFT_CS,

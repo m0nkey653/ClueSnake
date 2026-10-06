@@ -28,16 +28,6 @@ struct Point
     }
   }
 
-  void SerialPrint(const char* prefix)
-  {
-    Serial.print(prefix);
-    Serial.print('(');
-    Serial.print((int)_x);
-    Serial.print(',');
-    Serial.print((int)_y);
-    Serial.println(')');
-  }
-  
   bool operator==(const Point& rhs)
   {
       return (_x == rhs._x && _y == rhs._y)

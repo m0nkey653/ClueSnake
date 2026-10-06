@@ -10,7 +10,6 @@ Adafruit_ImageReader reader(filesys);
 volatile bool ImageLoaderDisplayRelease = false;
 void ImageLoaderRelease()
 {
-    Serial.println("ImageLoader::ImageLoaderRelease");
     ImageLoaderDisplayRelease = true;
 }
 
@@ -71,7 +70,6 @@ ImageReturnCode ImageLoader::DisplayImage(const char *imagePath)
 
 void ImageLoader::DisplayImage(const char *imagePath, std::vector<int> releaseButtonPins)
 {
-    Serial.println("ImageLoader::DisplayImage - started");
     if (DisplayImage(imagePath) == IMAGE_ERR_FILE_NOT_FOUND)
     {
         Serial.println("ImageLoader::DisplayImage - image not found, skipping");
@@ -80,13 +78,10 @@ void ImageLoader::DisplayImage(const char *imagePath, std::vector<int> releaseBu
 
     for (auto pin : releaseButtonPins)
     {
-        int mask = attachInterrupt(digitalPinToInterrupt(pin), ImageLoaderRelease, FALLING);
-        Serial.println("ImageLoader::DisplayImage - attachInterrupt - Pin: [" + String(pin) + "] Mask: [" + String(mask) + "]");
+        attachInterrupt(digitalPinToInterrupt(pin), ImageLoaderRelease, FALLING);
     }
 
     ImageLoaderDisplayRelease = false;
-    
-    Serial.println("ImageLoader::DisplayImage - awaiting keypress");
     while (!ImageLoaderDisplayRelease)
     {
         delay(50);
@@ -95,10 +90,7 @@ void ImageLoader::DisplayImage(const char *imagePath, std::vector<int> releaseBu
     for (auto pin : releaseButtonPins)
     {
         detachInterrupt(digitalPinToInterrupt(pin));
-        Serial.println("ImageLoader::DisplayImage - detachInterrupt - Pin: [" + String(pin) + "]");
     }
-    
-    Serial.println("ImageLoader::DisplayImage - ended");
 }
 
 String ImageLoader::GetStatusMessage(ImageReturnCode stat)

@@ -38,16 +38,12 @@ GameBoard::GameBoard(Point origin, int width, int height, Snake& snake, ScoreBoa
 
 void GameBoard::Initialize(Adafruit_SPITFT* display)
 {
-    Serial.println("GameBoard::Initialize - Start");
     _display = display;
     
     attachInterrupt(digitalPinToInterrupt(_leftPin), ButtonLeftPress, FALLING);
     attachInterrupt(digitalPinToInterrupt(_rightPin), ButtonRightPress, FALLING);
 
     InitializeInternal();
-
-    Serial.println("GameBoard::Initialize - End");
-    
 }
 
 void GameBoard::InitializeInternal()
@@ -107,10 +103,8 @@ void GameBoard::Update()
             }
             else
             {
-                //_activeTreat.SerialPrint("Treat eaten: ");
                 _snake.IncreaseLength(SnakeIncreaseLength);
                 _activeTreat = GetActiveTreat();
-                //_activeTreat.SerialPrint("New Active Treat: ");
                 _activeTreat.Draw(_display);
             }
         }
@@ -149,8 +143,8 @@ Treat GameBoard::GetActiveTreat()
     Treat activeTreat = {};
     do
     {
-        activeTreatPoint._x = (char)random(_origin._x + SpaceSize, _width - SpaceSize - TreatSize);
-        activeTreatPoint._y = (char)random(_origin._y + SpaceSize, _height - SpaceSize - TreatSize);
+        activeTreatPoint._x = random(_origin._x + SpaceSize, _origin._x + _width - SpaceSize - TreatSize);
+        activeTreatPoint._y = random(_origin._y + SpaceSize, _origin._y + _height - SpaceSize - TreatSize);
         Treat t(activeTreatPoint, TreatSize, ARCADA_RED);
         activeTreat = t;
     }

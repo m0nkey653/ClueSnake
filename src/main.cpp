@@ -11,12 +11,6 @@
 #define CLUE_LEFT_PIN 5
 #define CLUE_RIGHT_PIN 11
 
-#define ARCADA_NEOPIXEL_PIN 18
-#define ARCADA_NEOPIXEL_NUM 1
-
-#define ARCADA_AUDIO_OUT 46 // PWM output
-#define ARCADA_USE_JSON
-
 auto timer = timer_create_default(); // create a timer with default settings
 ClueDisplay display;
 Snake snake;

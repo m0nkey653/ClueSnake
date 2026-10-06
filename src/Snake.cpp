@@ -40,9 +40,6 @@ void Snake::TurnSnake(Rotation rotation)
     default:
       break;
   }
-  
-  // Serial.printf("Snake::TurnSnake - CurrentDirection[%s] RotationInput[%s] PendingDirection[%s]\n",
-  //   DirectionString(_direction), RotationString(rotation), DirectionString(_pendingDirection));
 }
 
 void Snake::UpdateSnake()
@@ -60,20 +57,6 @@ void Snake::UpdateSnake()
   _pendingDirection = Direction::Unset;
 }
 
-String getDir(Direction d)
-{
-  if (d == Direction::North)
-    return "N";
-  if (d == Direction::East)
-    return "E";
-  if (d == Direction::West)
-    return "W";
-  if (d == Direction::South)
-    return "S";
-  
-  return "U";
-}
-
 bool Snake::IsSnakeEatingItself()
 {
   auto head = _segments[0];
@@ -81,17 +64,6 @@ bool Snake::IsSnakeEatingItself()
   {
     if (head.Intersects(_segments[i]))
     {
-      Serial.printf("Intersection at [%d] of [%d]\n", i, _segments.size());
-      Serial.printf(" Head: (%d, %d) (%d, %d)\n", head._topLeft._x, head._topLeft._y, head._topRight._x, head._topRight._y);
-      Serial.printf("       (%d, %d) (%d, %d)\n", head._bottomLeft._x, head._bottomLeft._y, head._bottomRight._x, head._bottomRight._y);
-
-      for (size_t j = 1; j <= i; j++)
-      {
-        auto seg = _segments[j];
-        Serial.printf("  Int[%d]: (%d, %d) (%d, %d)\n", j, seg._topLeft._x, seg._topLeft._y, seg._topRight._x, seg._topRight._y);
-        Serial.printf("     [%s]: (%d, %d) (%d, %d)\n", getDir(seg._direction).c_str(), seg._bottomLeft._x, seg._bottomLeft._y, seg._bottomRight._x, seg._bottomRight._y);
-        //Serial.printf("         %s", seg._)
-      }
       return true;
     }
   }
